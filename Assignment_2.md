@@ -16,7 +16,6 @@
 
 Loading packages
 
-
 ```r
 library(plyr)
 library(data.table)
@@ -24,13 +23,13 @@ library(ggplot2)
 library(gridExtra)
 ```
 
-### Variables relating to population health include fatalities and injuries. I first set out to check the relationships between types of events and fatalities, types of events and injuries, respectively. 
+#### Variables relating to population health include fatalities and injuries. I first set out to check the relationships between types of events and fatalities, types of events and injuries, respectively. 
 
-### I first used "read.csv"" to load bz2 files, but it was painfully slow. Then I resorted to "fread" in the "data.table" package. It worked blazingly fast, except that there were constant error messages that blocked me from loading the entire database. 
+#### I first used "read.csv"" to load bz2 files, but it was painfully slow. Then I resorted to "fread" in the "data.table" package. It worked blazingly fast, except that there were constant error messages that blocked me from loading the entire database. 
 
-### After hours of trial and error, I gave up. I went on to extract manually the csv file from the raw bz2 archive, opened it in excel, and deleted the problematic column "REMARKS", which contained various characters that were a) meaningless for this research, and b) rendered read.csv/fread non-working. I saved the resultant csv file as "repdata-data-StormData-2.csv".
+#### After hours of trial and error, I gave up. I went on to extract manually the csv file from the raw bz2 archive, opened it in excel, and deleted the problematic column "REMARKS", which contained various characters that were a) meaningless for this research, and b) rendered read.csv/fread non-working. I saved the resultant csv file as "repdata-data-StormData-2.csv".
 
-### Part of the csv was loaded and I checked the names of columns.
+Part of the csv was loaded and I checked the names of columns.
 
 ```r
 data_temp <- fread('repdata-data-StormData-2.csv', stringsAsFactors = FALSE, header = TRUE, nrow = 1000)
@@ -48,20 +47,20 @@ colnames(data_temp)
 ## [36] "REFNUM"     "V37"        "V38"        "V39"
 ```
 
-### It was decided that only columns of EVTYPE, INJURIES and MORTALITIES need to be loaded to answer the first question.
+It was decided that only columns of EVTYPE, INJURIES and MORTALITIES need to be loaded to answer the first question.
 
 ```r
 data_event <- fread('repdata-data-StormData-2.csv', stringsAsFactors = FALSE, header = TRUE, select = c(8, 23, 24))
 ```
 
-### Then contents of the column EVTYPE needed to be cleaned up. I first loaded names of severe weather events from the National Weather Service website. 
+Then contents of the column EVTYPE needed to be cleaned up. I first loaded names of severe weather events from the National Weather Service website. 
 
 ```r
 data_event$INDEX = as.numeric(row.names(data_event))
 event_names = c('ASTRONOMICAL LOW TIDE', 'AVALANCHE', 'BLIZZARD', 'COASTAL FLOOD', 'COLD', 'DEBRIS FLOW', 'DENSE FOG', 'DENSE SMOKE', 'DROUGHT', 'DUST DEVIL', 'DUST STORM', 'EXCESSIVE HEAT', 'EXTREME COLD', 'FLASH FLOOD', 'FLOOD', 'FREEZING FOG', 'FROST', 'FREEZE', 'FUNNEL CLOUD', 'HAIL', 'HEAT', 'HEAVY RAIN', 'HEAVY SNOW', 'HIGH SURF', 'HURRICANE', 'TYPHOON', 'ICE STORM', 'LAKESHORE FLOOD', 'LAKE-EFFECT SNOW', 'LIGHTNING', 'MARINE HAIL', 'MARINE HIGH WIND', 'MARINE STRONG WIND', 'MARINE THUNDERSTORM WIND', 'RIP CURRENT', 'SEICHE', 'SLEET', 'STORM TIDE', 'STRONG WIND', 'THUNDERSTORM WIND', 'TORNADO', 'TROPICAL DEPRESSION', 'TROPICAL STORM', 'TSUNAMI', 'VOLCANIC ASH', 'WATERSPOUT', 'WILDFIRE', 'WINTER STORM', 'WINTER WEATHER')
 ```
 
-### Then I separated those lines of data that contained official names.
+Then I separated those lines of data that contained official names.
 
 ```r
 data_event_captured = data_event[(data_event$EVTYPE == event_names[1]),]
@@ -71,7 +70,7 @@ for (i in 2:length(event_names)) {
 }
 ```
 
-### Let us see what names of EVTYPES are not mentioned in the official guidance. (usually due to spelling, plural/singular forms, or errors)
+Let us see what names of EVTYPES are not mentioned in the official guidance. (usually due to spelling, plural/singular forms, or errors)
 
 ```r
 event_names_missed <- unique(data_event_captured$EVTYPE)
@@ -82,7 +81,7 @@ setdiff(event_names, event_names_missed)
 ## [1] "DEBRIS FLOW" "STORM TIDE"
 ```
 
-### I Checked if there are cases of setdiff results in data_event.
+I Checked if there are cases of setdiff results in data_event.
 
 ```r
 subset(data_event, EVTYPE == 'DEBRIS FLOW')
@@ -100,21 +99,21 @@ subset(data_event, EVTYPE == 'STORM TIDE')
 ## Empty data.table (0 rows) of 4 cols: EVTYPE,FATALITIES,INJURIES,INDEX
 ```
 
-### Missed records were obtained
+Missed records were obtained
 
 ```r
 data_event_missed_index = setdiff(data_event$INDEX, data_event_captured$INDEX)
 data_event_missed <- data_event[(data_event_missed_index),]
 ```
 
-### Total injuries and fatalities of data_event_captured and data_event_missed were calculated.
+Total injuries and fatalities of data_event_captured and data_event_missed were calculated.
 
 ```r
 data_event_captured_tot <- ddply(data_event_captured, 'EVTYPE', summarize, INJURIES_TOT = sum(as.numeric(INJURIES)), FATALITIES_TOT = sum(as.numeric(FATALITIES)))
 data_event_missed_tot <- ddply(data_event_missed, 'EVTYPE', summarize, INJURIES_TOT = sum(as.numeric(INJURIES)), FATALITIES_TOT = sum(as.numeric(FATALITIES)))
 ```
 
-### I calculated median of fatalities/injuries of data_event_captured_tot. Only those non-official EVTYPE datalines with a high enough total value were then included in the statistics.
+I calculated median of fatalities/injuries of data_event_captured_tot. Only those non-official EVTYPE datalines with a high enough total value were then included in the statistics.
 
 ```r
 median(data_event_captured_tot$INJURIES_TOT)
@@ -132,14 +131,13 @@ median(data_event_captured_tot$FATALITIES_TOT)
 ## [1] 22
 ```
 
-### Major missed events were then identified.
+Major missed events were then identified.
 
 ```r
 major_missed <- subset(data_event_missed_tot, (FATALITIES_TOT > 20 | INJURIES_TOT > 100))
 ```
 
-### From major_missed, I ditched "useless" EVTYPES and then, combined the meaningful ones into data_event_2
-
+From major_missed, I ditched "useless" EVTYPES and then, combined the meaningful ones into data_event_2
 
 ```r
 event_names_2 = c('COLD/WIND CHILL', 'EXTREME COLD/WIND CHILL', 'EXTREME HEAT', 'FOG', 'GLAZE', 'HEAT WAVE', 'HEAVE SURF/HIGH SURF', 'HIGH WIND', 'HIGH WINDS', 'HURRICANE/TYPHOON', 'ICE', 'LANDSLIDE', 'RIP CURRENTS', 'THUNDERSTORM WINDS', 'TSTM WIND', 'URBAN/SML STREAM FLD', 'WILD FIRES', 'WILD/FOREST FIRE', 'WIND', 'WINTER WEATHER/MIX')
@@ -153,37 +151,37 @@ for (i in 2:length(event_names_2)) {
 data_event_captured_2_tot <- ddply(data_event_captured_2, 'EVTYPE', summarize, INJURIES_TOT = sum(as.numeric(INJURIES)), FATALITIES_TOT = sum(as.numeric(FATALITIES)))
 ```
 
-### The two captured total datasets were combined
+The two captured total datasets were combined
 
 ```r
 data_event_captured_all_tot <- rbind(data_event_captured_tot, data_event_captured_2_tot) 
 ```
 
-#### Merging hurricane/typhoon
+Merging hurricane/typhoon
 
 ```r
 data_event_captured_all_tot[56,2:3] = (data_event_captured_all_tot[24, 2:3]) + (data_event_captured_all_tot[42, 2:3]) + (data_event_captured_all_tot[56, 2:3])
 ```
 
-#### Thunderstorm = tstm
+Thunderstorm = tstm
 
 ```r
 data_event_captured_all_tot[60, 2:3] = (data_event_captured_all_tot[60, 2:3]) + (data_event_captured_all_tot[61, 2:3]) + (data_event_captured_all_tot[37, 2:3])
 ```
 
-#### Combining heat, excessive heat and extreme heat
+Combining heat, excessive heat and extreme heat
 
 ```r
 data_event_captured_all_tot[20, 2:3] = (data_event_captured_all_tot[20, 2:3]) + (data_event_captured_all_tot[11, 2:3]) + (data_event_captured_all_tot[50, 2:3])
 ```
 
-#### Deleting lines 24, 42, 61 and 37
+Deleting lines 24, 42, 61 and 37
 
 ```r
 data_event_captured_all_tot <- data_event_captured_all_tot[-c(11, 24, 42, 37, 50, 61),]
 ```
 
-### I obtained the data of total injuries or fatalities in their respective upper quantiles. The numbers 686 and 125 were derived arbitrarily from the two lines of summary data below.
+I obtained the data of total injuries or fatalities in their respective upper quantiles. The numbers 686 and 125 were derived arbitrarily from the two lines of summary data below.
 
 ```r
 summary(data_event_captured_all_tot$INJURIES_TOT)
@@ -207,7 +205,7 @@ summary(data_event_captured_all_tot$FATALITIES_TOT)
 data_event_top <- subset(data_event_captured_all_tot, INJURIES_TOT > 686 | FATALITIES_TOT > 125)
 ```
 
-### The data_event_top dataset was sorted.
+The data_event_top dataset was sorted.
 
 ```r
 data_event_top_injuries <- data_event_top[order(data_event_top$INJURIES_TOT, decreasing = TRUE),][1:10,]
@@ -216,7 +214,7 @@ rownames(data_event_top_injuries) <- 1:nrow(data_event_top_injuries)
 rownames(data_event_top_fatalities) <- 1:nrow(data_event_top_fatalities)
 ```
 
-### Final results were plotted then.
+Final results were plotted then.
 
 ```r
 positions_injuries <- rev(data_event_top_injuries$EVTYPE)
@@ -237,9 +235,9 @@ event_plot <- grid.arrange(plot1, plot2)
 
 ## Question 2 Across the United States, which types of events have the greatest economic consequences?
 
-### Apart from property and crop damages, I think injuries and fatalities should also be considered.
+#### Apart from property and crop damages, I think injuries and fatalities should also be considered.
 
-### The columns of data to be analyzed for this purpose were identified.
+The columns of data to be analyzed for this purpose were identified.
 
 ```r
 data_temp2 <- fread('repdata-data-StormData-2.csv', stringsAsFactors = FALSE, header = TRUE, nrow = 1000)
@@ -262,12 +260,12 @@ data_eco <- fread('repdata-data-StormData-2.csv', stringsAsFactors = FALSE, head
 ```
 
 ```
-## Read 49.8% of 903870 rowsRead 903870 rows and 7 (of 39) columns from 0.194 GB file in 00:00:03
+## Read 52.0% of 903870 rowsRead 903870 rows and 7 (of 39) columns from 0.194 GB file in 00:00:03
 ```
 
 
 
-### EVTYPE contents were cleaned up as above.
+EVTYPE contents were cleaned up as above.
 
 ```r
 data_eco$INDEX = as.numeric(row.names(data_eco))
@@ -280,7 +278,7 @@ for (i in 2:length(event_names)) {
 }
 ```
 
-#### Checking missing EVTYPES
+Checking missing EVTYPES
 
 ```r
 event_names_missed <- unique(data_eco_captured$EVTYPE)
@@ -291,7 +289,7 @@ setdiff(event_names, event_names_missed)
 ## [1] "DEBRIS FLOW" "STORM TIDE"
 ```
 
-#### Checking if there are cases of setdiff results in data_event
+Checking if there are cases of setdiff results in data_event
 
 ```r
 subset(data_eco, EVTYPE == 'DEBRIS FLOW')
@@ -309,7 +307,7 @@ subset(data_eco, EVTYPE == 'STORM TIDE')
 ## Empty data.table (0 rows) of 8 cols: EVTYPE,FATALITIES,INJURIES,PROPDMG,PROPDMGEXP,CROPDMG...
 ```
 
-#### Obtaining missed records
+Obtaining missed records
 
 ```r
 data_eco_missed_index = setdiff(data_eco$INDEX, data_eco_captured$INDEX)
@@ -317,7 +315,7 @@ data_eco_missed <- data_eco[(data_eco_missed_index),]
 ```
 
 
-#### Picking out all data with viable property/crop damage data
+Picking out all data with viable property/crop damage data
 
 ```r
 data_eco_captured_calc <- subset(data_eco_captured, (PROPDMGEXP == '' | PROPDMGEXP == 'B' | PROPDMGEXP == 'K' | PROPDMGEXP == 'M' | PROPDMGEXP == 'm') & (CROPDMGEXP == '' | CROPDMGEXP == 'B' | CROPDMGEXP == 'K' | CROPDMGEXP == 'k' | CROPDMGEXP == 'M'))
@@ -325,10 +323,9 @@ data_eco_captured_calc <- subset(data_eco_captured, (PROPDMGEXP == '' | PROPDMGE
 data_eco_missed_calc <- subset(data_eco_missed, (PROPDMGEXP == '' | PROPDMGEXP == 'B' | PROPDMGEXP == 'K' | PROPDMGEXP == 'M' | PROPDMGEXP == 'm') & (CROPDMGEXP == '' | CROPDMGEXP == 'B' | CROPDMGEXP == 'K' | CROPDMGEXP == 'k' | CROPDMGEXP == 'M'))
 ```
 
-### Then I calculatedinjuries, fatalities, and damages of data_event_captured and data_event_missed for various EVTYPES.
+Then I calculated injuries, fatalities, and damages of data_event_captured and data_event_missed for various EVTYPES.
 
-#### According to 'http://www.msha.gov/s&hinfo/costgenerator/costgenerator.htm', I set damage of USD 910k for one death, and USD 28k for one injury. 
-
+According to 'http://www.msha.gov/s&hinfo/costgenerator/costgenerator.htm', I set damage of USD 910k for one death, and USD 28k for one injury. 
 
 ```r
 data_eco_captured_calc$PROPDMGTOT = 0
@@ -372,7 +369,7 @@ data_eco_missed_tot <- ddply(data_eco_missed_calc, 'EVTYPE', summarize, TOTAL = 
 ```
 
 
-### I looked for top 20 disasters that inflicted most damages.
+I looked for top 20 disasters that inflicted most damages.
 
 ```r
 data_eco_top_captured <- data_eco_captured_tot[order(data_eco_captured_tot$TOTAL, decreasing = TRUE),][1:20,]
@@ -381,9 +378,9 @@ rownames(data_eco_top_captured) = c(1:nrow(data_eco_top_captured))
 rownames(data_eco_top_missed) = c(1:nrow(data_eco_top_missed))
 ```
 
-### And then I did some clean up work.
+And then I did some clean up work.
 
-#### hurricane/typhoon
+hurricane/typhoon
 
 ```r
 data_eco_top_captured[6,2] = data_eco_top_captured[6,2] + data_eco_top_captured[19,2] + data_eco_top_missed[1,2]
@@ -394,7 +391,7 @@ rownames(data_eco_top_missed) = c(1:nrow(data_eco_top_missed))
 rownames(data_eco_top_captured) = c(1:nrow(data_eco_top_captured))
 ```
 
-#### thunderstorm = tstm
+thunderstorm = tstm
 
 ```r
 data_eco_top_captured[11,2] = data_eco_top_captured[11,2] + data_eco_top_missed[10,2] + data_eco_top_missed[5,2]
@@ -403,7 +400,7 @@ rownames(data_eco_top_missed) = c(1:nrow(data_eco_top_missed))
 rownames(data_eco_top_captured) = c(1:nrow(data_eco_top_captured))
 ```
 
-#### combining two top datasets and order
+combining two top datasets and order
 
 ```r
 data_eco_top <- rbind(data_eco_top_missed, data_eco_top_captured)
@@ -411,20 +408,20 @@ data_eco_top <- data_eco_top[order(data_eco_top$TOTAL, decreasing = TRUE),][1:20
 rownames(data_eco_top) = c(1:nrow(data_eco_top))
 ```
 
-### Top10 of the data_eco_top were identified.
+Top10 of the data_eco_top were identified.
 
 ```r
 data_eco_top <- data_eco_top[1:10,]
 ```
 
-#### With damage cost data transformed to billions
+With damage cost data transformed to billions
 
 ```r
 data_eco_top$TOTALB = data_eco_top$TOTAL / 1000000000
 data_eco_top$TOTALB = round(data_eco_top$TOTALB, digits = 1)
 ```
 
-### Then the plot was made.
+Then the plot was made.
 
 ```r
 positions_eco <- rev(data_eco_top$EVTYPE)

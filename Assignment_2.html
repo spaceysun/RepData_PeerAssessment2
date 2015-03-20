@@ -92,13 +92,13 @@ library(ggplot2)
 library(gridExtra)
 </code></pre>
 
-<h3>Variables relating to population health include fatalities and injuries. I first set out to check the relationships between types of events and fatalities, types of events and injuries, respectively.</h3>
+<h4>Variables relating to population health include fatalities and injuries. I first set out to check the relationships between types of events and fatalities, types of events and injuries, respectively.</h4>
 
-<h3>I first used &ldquo;read.csv&rdquo;&ldquo; to load bz2 files, but it was painfully slow. Then I resorted to &quot;fread&rdquo; in the &ldquo;data.table&rdquo; package. It worked blazingly fast, except that there were constant error messages that blocked me from loading the entire database.</h3>
+<h4>I first used &ldquo;read.csv&rdquo;&ldquo; to load bz2 files, but it was painfully slow. Then I resorted to &quot;fread&rdquo; in the &ldquo;data.table&rdquo; package. It worked blazingly fast, except that there were constant error messages that blocked me from loading the entire database.</h4>
 
-<h3>After hours of trial and error, I gave up. I went on to extract manually the csv file from the raw bz2 archive, opened it in excel, and deleted the problematic column &ldquo;REMARKS&rdquo;, which contained various characters that were a) meaningless for this research, and b) rendered read.csv/fread non-working. I saved the resultant csv file as &ldquo;repdata-data-StormData-2.csv&rdquo;.</h3>
+<h4>After hours of trial and error, I gave up. I went on to extract manually the csv file from the raw bz2 archive, opened it in excel, and deleted the problematic column &ldquo;REMARKS&rdquo;, which contained various characters that were a) meaningless for this research, and b) rendered read.csv/fread non-working. I saved the resultant csv file as &ldquo;repdata-data-StormData-2.csv&rdquo;.</h4>
 
-<h3>Part of the csv was loaded and I checked the names of columns.</h3>
+<p>Part of the csv was loaded and I checked the names of columns.</p>
 
 <pre><code class="r">data_temp &lt;- fread(&#39;repdata-data-StormData-2.csv&#39;, stringsAsFactors = FALSE, header = TRUE, nrow = 1000)
 colnames(data_temp)
@@ -114,18 +114,18 @@ colnames(data_temp)
 ## [36] &quot;REFNUM&quot;     &quot;V37&quot;        &quot;V38&quot;        &quot;V39&quot;
 </code></pre>
 
-<h3>It was decided that only columns of EVTYPE, INJURIES and MORTALITIES need to be loaded to answer the first question.</h3>
+<p>It was decided that only columns of EVTYPE, INJURIES and MORTALITIES need to be loaded to answer the first question.</p>
 
 <pre><code class="r">data_event &lt;- fread(&#39;repdata-data-StormData-2.csv&#39;, stringsAsFactors = FALSE, header = TRUE, select = c(8, 23, 24))
 </code></pre>
 
-<h3>Then contents of the column EVTYPE needed to be cleaned up. I first loaded names of severe weather events from the National Weather Service website.</h3>
+<p>Then contents of the column EVTYPE needed to be cleaned up. I first loaded names of severe weather events from the National Weather Service website. </p>
 
 <pre><code class="r">data_event$INDEX = as.numeric(row.names(data_event))
 event_names = c(&#39;ASTRONOMICAL LOW TIDE&#39;, &#39;AVALANCHE&#39;, &#39;BLIZZARD&#39;, &#39;COASTAL FLOOD&#39;, &#39;COLD&#39;, &#39;DEBRIS FLOW&#39;, &#39;DENSE FOG&#39;, &#39;DENSE SMOKE&#39;, &#39;DROUGHT&#39;, &#39;DUST DEVIL&#39;, &#39;DUST STORM&#39;, &#39;EXCESSIVE HEAT&#39;, &#39;EXTREME COLD&#39;, &#39;FLASH FLOOD&#39;, &#39;FLOOD&#39;, &#39;FREEZING FOG&#39;, &#39;FROST&#39;, &#39;FREEZE&#39;, &#39;FUNNEL CLOUD&#39;, &#39;HAIL&#39;, &#39;HEAT&#39;, &#39;HEAVY RAIN&#39;, &#39;HEAVY SNOW&#39;, &#39;HIGH SURF&#39;, &#39;HURRICANE&#39;, &#39;TYPHOON&#39;, &#39;ICE STORM&#39;, &#39;LAKESHORE FLOOD&#39;, &#39;LAKE-EFFECT SNOW&#39;, &#39;LIGHTNING&#39;, &#39;MARINE HAIL&#39;, &#39;MARINE HIGH WIND&#39;, &#39;MARINE STRONG WIND&#39;, &#39;MARINE THUNDERSTORM WIND&#39;, &#39;RIP CURRENT&#39;, &#39;SEICHE&#39;, &#39;SLEET&#39;, &#39;STORM TIDE&#39;, &#39;STRONG WIND&#39;, &#39;THUNDERSTORM WIND&#39;, &#39;TORNADO&#39;, &#39;TROPICAL DEPRESSION&#39;, &#39;TROPICAL STORM&#39;, &#39;TSUNAMI&#39;, &#39;VOLCANIC ASH&#39;, &#39;WATERSPOUT&#39;, &#39;WILDFIRE&#39;, &#39;WINTER STORM&#39;, &#39;WINTER WEATHER&#39;)
 </code></pre>
 
-<h3>Then I separated those lines of data that contained official names.</h3>
+<p>Then I separated those lines of data that contained official names.</p>
 
 <pre><code class="r">data_event_captured = data_event[(data_event$EVTYPE == event_names[1]),]
 
@@ -134,7 +134,7 @@ for (i in 2:length(event_names)) {
 }
 </code></pre>
 
-<h3>Let us see what names of EVTYPES are not mentioned in the official guidance. (usually due to spelling, plural/singular forms, or errors)</h3>
+<p>Let us see what names of EVTYPES are not mentioned in the official guidance. (usually due to spelling, plural/singular forms, or errors)</p>
 
 <pre><code class="r">event_names_missed &lt;- unique(data_event_captured$EVTYPE)
 setdiff(event_names, event_names_missed)
@@ -143,7 +143,7 @@ setdiff(event_names, event_names_missed)
 <pre><code>## [1] &quot;DEBRIS FLOW&quot; &quot;STORM TIDE&quot;
 </code></pre>
 
-<h3>I Checked if there are cases of setdiff results in data_event.</h3>
+<p>I Checked if there are cases of setdiff results in data_event.</p>
 
 <pre><code class="r">subset(data_event, EVTYPE == &#39;DEBRIS FLOW&#39;)
 </code></pre>
@@ -157,19 +157,19 @@ setdiff(event_names, event_names_missed)
 <pre><code>## Empty data.table (0 rows) of 4 cols: EVTYPE,FATALITIES,INJURIES,INDEX
 </code></pre>
 
-<h3>Missed records were obtained</h3>
+<p>Missed records were obtained</p>
 
 <pre><code class="r">data_event_missed_index = setdiff(data_event$INDEX, data_event_captured$INDEX)
 data_event_missed &lt;- data_event[(data_event_missed_index),]
 </code></pre>
 
-<h3>Total injuries and fatalities of data_event_captured and data_event_missed were calculated.</h3>
+<p>Total injuries and fatalities of data_event_captured and data_event_missed were calculated.</p>
 
 <pre><code class="r">data_event_captured_tot &lt;- ddply(data_event_captured, &#39;EVTYPE&#39;, summarize, INJURIES_TOT = sum(as.numeric(INJURIES)), FATALITIES_TOT = sum(as.numeric(FATALITIES)))
 data_event_missed_tot &lt;- ddply(data_event_missed, &#39;EVTYPE&#39;, summarize, INJURIES_TOT = sum(as.numeric(INJURIES)), FATALITIES_TOT = sum(as.numeric(FATALITIES)))
 </code></pre>
 
-<h3>I calculated median of fatalities/injuries of data_event_captured_tot. Only those non-official EVTYPE datalines with a high enough total value were then included in the statistics.</h3>
+<p>I calculated median of fatalities/injuries of data_event_captured_tot. Only those non-official EVTYPE datalines with a high enough total value were then included in the statistics.</p>
 
 <pre><code class="r">median(data_event_captured_tot$INJURIES_TOT)
 </code></pre>
@@ -183,12 +183,12 @@ data_event_missed_tot &lt;- ddply(data_event_missed, &#39;EVTYPE&#39;, summarize
 <pre><code>## [1] 22
 </code></pre>
 
-<h3>Major missed events were then identified.</h3>
+<p>Major missed events were then identified.</p>
 
 <pre><code class="r">major_missed &lt;- subset(data_event_missed_tot, (FATALITIES_TOT &gt; 20 | INJURIES_TOT &gt; 100))
 </code></pre>
 
-<h3>From major_missed, I ditched &ldquo;useless&rdquo; EVTYPES and then, combined the meaningful ones into data_event_2</h3>
+<p>From major_missed, I ditched &ldquo;useless&rdquo; EVTYPES and then, combined the meaningful ones into data_event_2</p>
 
 <pre><code class="r">event_names_2 = c(&#39;COLD/WIND CHILL&#39;, &#39;EXTREME COLD/WIND CHILL&#39;, &#39;EXTREME HEAT&#39;, &#39;FOG&#39;, &#39;GLAZE&#39;, &#39;HEAT WAVE&#39;, &#39;HEAVE SURF/HIGH SURF&#39;, &#39;HIGH WIND&#39;, &#39;HIGH WINDS&#39;, &#39;HURRICANE/TYPHOON&#39;, &#39;ICE&#39;, &#39;LANDSLIDE&#39;, &#39;RIP CURRENTS&#39;, &#39;THUNDERSTORM WINDS&#39;, &#39;TSTM WIND&#39;, &#39;URBAN/SML STREAM FLD&#39;, &#39;WILD FIRES&#39;, &#39;WILD/FOREST FIRE&#39;, &#39;WIND&#39;, &#39;WINTER WEATHER/MIX&#39;)
 
@@ -201,32 +201,32 @@ for (i in 2:length(event_names_2)) {
 data_event_captured_2_tot &lt;- ddply(data_event_captured_2, &#39;EVTYPE&#39;, summarize, INJURIES_TOT = sum(as.numeric(INJURIES)), FATALITIES_TOT = sum(as.numeric(FATALITIES)))
 </code></pre>
 
-<h3>The two captured total datasets were combined</h3>
+<p>The two captured total datasets were combined</p>
 
 <pre><code class="r">data_event_captured_all_tot &lt;- rbind(data_event_captured_tot, data_event_captured_2_tot) 
 </code></pre>
 
-<h4>Merging hurricane/typhoon</h4>
+<p>Merging hurricane/typhoon</p>
 
 <pre><code class="r">data_event_captured_all_tot[56,2:3] = (data_event_captured_all_tot[24, 2:3]) + (data_event_captured_all_tot[42, 2:3]) + (data_event_captured_all_tot[56, 2:3])
 </code></pre>
 
-<h4>Thunderstorm = tstm</h4>
+<p>Thunderstorm = tstm</p>
 
 <pre><code class="r">data_event_captured_all_tot[60, 2:3] = (data_event_captured_all_tot[60, 2:3]) + (data_event_captured_all_tot[61, 2:3]) + (data_event_captured_all_tot[37, 2:3])
 </code></pre>
 
-<h4>Combining heat, excessive heat and extreme heat</h4>
+<p>Combining heat, excessive heat and extreme heat</p>
 
 <pre><code class="r">data_event_captured_all_tot[20, 2:3] = (data_event_captured_all_tot[20, 2:3]) + (data_event_captured_all_tot[11, 2:3]) + (data_event_captured_all_tot[50, 2:3])
 </code></pre>
 
-<h4>Deleting lines 24, 42, 61 and 37</h4>
+<p>Deleting lines 24, 42, 61 and 37</p>
 
 <pre><code class="r">data_event_captured_all_tot &lt;- data_event_captured_all_tot[-c(11, 24, 42, 37, 50, 61),]
 </code></pre>
 
-<h3>I obtained the data of total injuries or fatalities in their respective upper quantiles. The numbers 686 and 125 were derived arbitrarily from the two lines of summary data below.</h3>
+<p>I obtained the data of total injuries or fatalities in their respective upper quantiles. The numbers 686 and 125 were derived arbitrarily from the two lines of summary data below.</p>
 
 <pre><code class="r">summary(data_event_captured_all_tot$INJURIES_TOT)
 </code></pre>
@@ -245,7 +245,7 @@ data_event_captured_2_tot &lt;- ddply(data_event_captured_2, &#39;EVTYPE&#39;, s
 <pre><code class="r">data_event_top &lt;- subset(data_event_captured_all_tot, INJURIES_TOT &gt; 686 | FATALITIES_TOT &gt; 125)
 </code></pre>
 
-<h3>The data_event_top dataset was sorted.</h3>
+<p>The data_event_top dataset was sorted.</p>
 
 <pre><code class="r">data_event_top_injuries &lt;- data_event_top[order(data_event_top$INJURIES_TOT, decreasing = TRUE),][1:10,]
 data_event_top_fatalities &lt;- data_event_top[order(data_event_top$FATALITIES_TOT, decreasing = TRUE),][1:10,]
@@ -253,7 +253,7 @@ rownames(data_event_top_injuries) &lt;- 1:nrow(data_event_top_injuries)
 rownames(data_event_top_fatalities) &lt;- 1:nrow(data_event_top_fatalities)
 </code></pre>
 
-<h3>Final results were plotted then.</h3>
+<p>Final results were plotted then.</p>
 
 <pre><code class="r">positions_injuries &lt;- rev(data_event_top_injuries$EVTYPE)
 positions_fatalities &lt;- rev(data_event_top_fatalities$EVTYPE)
@@ -272,9 +272,9 @@ plot2 &lt;- ggplot(data_event_top_fatalities, aes(x = EVTYPE, y = FATALITIES_TOT
 
 <h2>Question 2 Across the United States, which types of events have the greatest economic consequences?</h2>
 
-<h3>Apart from property and crop damages, I think injuries and fatalities should also be considered.</h3>
+<h4>Apart from property and crop damages, I think injuries and fatalities should also be considered.</h4>
 
-<h3>The columns of data to be analyzed for this purpose were identified.</h3>
+<p>The columns of data to be analyzed for this purpose were identified.</p>
 
 <pre><code class="r">data_temp2 &lt;- fread(&#39;repdata-data-StormData-2.csv&#39;, stringsAsFactors = FALSE, header = TRUE, nrow = 1000)
 colnames(data_temp2)
@@ -294,11 +294,11 @@ colnames(data_temp2)
 </code></pre>
 
 <pre><code>## 
-Read 49.8% of 903870 rows
+Read 52.0% of 903870 rows
 Read 903870 rows and 7 (of 39) columns from 0.194 GB file in 00:00:03
 </code></pre>
 
-<h3>EVTYPE contents were cleaned up as above.</h3>
+<p>EVTYPE contents were cleaned up as above.</p>
 
 <pre><code class="r">data_eco$INDEX = as.numeric(row.names(data_eco))
 event_names = c(&#39;ASTRONOMICAL LOW TIDE&#39;, &#39;AVALANCHE&#39;, &#39;BLIZZARD&#39;, &#39;COASTAL FLOOD&#39;, &#39;COLD&#39;, &#39;DEBRIS FLOW&#39;, &#39;DENSE FOG&#39;, &#39;DENSE SMOKE&#39;, &#39;DROUGHT&#39;, &#39;DUST DEVIL&#39;, &#39;DUST STORM&#39;, &#39;EXCESSIVE HEAT&#39;, &#39;EXTREME COLD&#39;, &#39;FLASH FLOOD&#39;, &#39;FLOOD&#39;, &#39;FREEZING FOG&#39;, &#39;FROST&#39;, &#39;FREEZE&#39;, &#39;FUNNEL CLOUD&#39;, &#39;HAIL&#39;, &#39;HEAT&#39;, &#39;HEAVY RAIN&#39;, &#39;HEAVY SNOW&#39;, &#39;HIGH SURF&#39;, &#39;HURRICANE&#39;, &#39;TYPHOON&#39;, &#39;ICE STORM&#39;, &#39;LAKESHORE FLOOD&#39;, &#39;LAKE-EFFECT SNOW&#39;, &#39;LIGHTNING&#39;, &#39;MARINE HAIL&#39;, &#39;MARINE HIGH WIND&#39;, &#39;MARINE STRONG WIND&#39;, &#39;MARINE THUNDERSTORM WIND&#39;, &#39;RIP CURRENT&#39;, &#39;SEICHE&#39;, &#39;SLEET&#39;, &#39;STORM TIDE&#39;, &#39;STRONG WIND&#39;, &#39;THUNDERSTORM WIND&#39;, &#39;TORNADO&#39;, &#39;TROPICAL DEPRESSION&#39;, &#39;TROPICAL STORM&#39;, &#39;TSUNAMI&#39;, &#39;VOLCANIC ASH&#39;, &#39;WATERSPOUT&#39;, &#39;WILDFIRE&#39;, &#39;WINTER STORM&#39;, &#39;WINTER WEATHER&#39;)
@@ -310,7 +310,7 @@ for (i in 2:length(event_names)) {
 }
 </code></pre>
 
-<h4>Checking missing EVTYPES</h4>
+<p>Checking missing EVTYPES</p>
 
 <pre><code class="r">event_names_missed &lt;- unique(data_eco_captured$EVTYPE)
 setdiff(event_names, event_names_missed)
@@ -319,7 +319,7 @@ setdiff(event_names, event_names_missed)
 <pre><code>## [1] &quot;DEBRIS FLOW&quot; &quot;STORM TIDE&quot;
 </code></pre>
 
-<h4>Checking if there are cases of setdiff results in data_event</h4>
+<p>Checking if there are cases of setdiff results in data_event</p>
 
 <pre><code class="r">subset(data_eco, EVTYPE == &#39;DEBRIS FLOW&#39;)
 </code></pre>
@@ -333,22 +333,22 @@ setdiff(event_names, event_names_missed)
 <pre><code>## Empty data.table (0 rows) of 8 cols: EVTYPE,FATALITIES,INJURIES,PROPDMG,PROPDMGEXP,CROPDMG...
 </code></pre>
 
-<h4>Obtaining missed records</h4>
+<p>Obtaining missed records</p>
 
 <pre><code class="r">data_eco_missed_index = setdiff(data_eco$INDEX, data_eco_captured$INDEX)
 data_eco_missed &lt;- data_eco[(data_eco_missed_index),]
 </code></pre>
 
-<h4>Picking out all data with viable property/crop damage data</h4>
+<p>Picking out all data with viable property/crop damage data</p>
 
 <pre><code class="r">data_eco_captured_calc &lt;- subset(data_eco_captured, (PROPDMGEXP == &#39;&#39; | PROPDMGEXP == &#39;B&#39; | PROPDMGEXP == &#39;K&#39; | PROPDMGEXP == &#39;M&#39; | PROPDMGEXP == &#39;m&#39;) &amp; (CROPDMGEXP == &#39;&#39; | CROPDMGEXP == &#39;B&#39; | CROPDMGEXP == &#39;K&#39; | CROPDMGEXP == &#39;k&#39; | CROPDMGEXP == &#39;M&#39;))
 
 data_eco_missed_calc &lt;- subset(data_eco_missed, (PROPDMGEXP == &#39;&#39; | PROPDMGEXP == &#39;B&#39; | PROPDMGEXP == &#39;K&#39; | PROPDMGEXP == &#39;M&#39; | PROPDMGEXP == &#39;m&#39;) &amp; (CROPDMGEXP == &#39;&#39; | CROPDMGEXP == &#39;B&#39; | CROPDMGEXP == &#39;K&#39; | CROPDMGEXP == &#39;k&#39; | CROPDMGEXP == &#39;M&#39;))
 </code></pre>
 
-<h3>Then I calculatedinjuries, fatalities, and damages of data_event_captured and data_event_missed for various EVTYPES.</h3>
+<p>Then I calculated injuries, fatalities, and damages of data_event_captured and data_event_missed for various EVTYPES.</p>
 
-<h4>According to &#39;<a href="http://www.msha.gov/s&amp;hinfo/costgenerator/costgenerator.htm">http://www.msha.gov/s&amp;hinfo/costgenerator/costgenerator.htm</a>&#39;, I set damage of USD 910k for one death, and USD 28k for one injury.</h4>
+<p>According to &#39;<a href="http://www.msha.gov/s&amp;hinfo/costgenerator/costgenerator.htm">http://www.msha.gov/s&amp;hinfo/costgenerator/costgenerator.htm</a>&#39;, I set damage of USD 910k for one death, and USD 28k for one injury. </p>
 
 <pre><code class="r">data_eco_captured_calc$PROPDMGTOT = 0
 data_eco_captured_calc$CROPDMGTOT = 0
@@ -390,7 +390,7 @@ data_eco_captured_tot &lt;- ddply(data_eco_captured_calc, &#39;EVTYPE&#39;, summ
 data_eco_missed_tot &lt;- ddply(data_eco_missed_calc, &#39;EVTYPE&#39;, summarize, TOTAL = sum(DMGTOT))
 </code></pre>
 
-<h3>I looked for top 20 disasters that inflicted most damages.</h3>
+<p>I looked for top 20 disasters that inflicted most damages.</p>
 
 <pre><code class="r">data_eco_top_captured &lt;- data_eco_captured_tot[order(data_eco_captured_tot$TOTAL, decreasing = TRUE),][1:20,]
 data_eco_top_missed &lt;- data_eco_missed_tot[order(data_eco_missed_tot$TOTAL, decreasing = TRUE),][1:20,]
@@ -398,9 +398,9 @@ rownames(data_eco_top_captured) = c(1:nrow(data_eco_top_captured))
 rownames(data_eco_top_missed) = c(1:nrow(data_eco_top_missed))
 </code></pre>
 
-<h3>And then I did some clean up work.</h3>
+<p>And then I did some clean up work.</p>
 
-<h4>hurricane/typhoon</h4>
+<p>hurricane/typhoon</p>
 
 <pre><code class="r">data_eco_top_captured[6,2] = data_eco_top_captured[6,2] + data_eco_top_captured[19,2] + data_eco_top_missed[1,2]
 data_eco_top_captured[6,1] = &#39;HURRICANE/TYPHOON&#39;
@@ -410,7 +410,7 @@ rownames(data_eco_top_missed) = c(1:nrow(data_eco_top_missed))
 rownames(data_eco_top_captured) = c(1:nrow(data_eco_top_captured))
 </code></pre>
 
-<h4>thunderstorm = tstm</h4>
+<p>thunderstorm = tstm</p>
 
 <pre><code class="r">data_eco_top_captured[11,2] = data_eco_top_captured[11,2] + data_eco_top_missed[10,2] + data_eco_top_missed[5,2]
 data_eco_top_missed &lt;- data_eco_top_missed[-c(5,10),]
@@ -418,25 +418,25 @@ rownames(data_eco_top_missed) = c(1:nrow(data_eco_top_missed))
 rownames(data_eco_top_captured) = c(1:nrow(data_eco_top_captured))
 </code></pre>
 
-<h4>combining two top datasets and order</h4>
+<p>combining two top datasets and order</p>
 
 <pre><code class="r">data_eco_top &lt;- rbind(data_eco_top_missed, data_eco_top_captured)
 data_eco_top &lt;- data_eco_top[order(data_eco_top$TOTAL, decreasing = TRUE),][1:20,]
 rownames(data_eco_top) = c(1:nrow(data_eco_top))
 </code></pre>
 
-<h3>Top10 of the data_eco_top were identified.</h3>
+<p>Top10 of the data_eco_top were identified.</p>
 
 <pre><code class="r">data_eco_top &lt;- data_eco_top[1:10,]
 </code></pre>
 
-<h4>With damage cost data transformed to billions</h4>
+<p>With damage cost data transformed to billions</p>
 
 <pre><code class="r">data_eco_top$TOTALB = data_eco_top$TOTAL / 1000000000
 data_eco_top$TOTALB = round(data_eco_top$TOTALB, digits = 1)
 </code></pre>
 
-<h3>Then the plot was made.</h3>
+<p>Then the plot was made.</p>
 
 <pre><code class="r">positions_eco &lt;- rev(data_eco_top$EVTYPE)
 
