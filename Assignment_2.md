@@ -53,6 +53,10 @@ It was decided that only columns of EVTYPE, INJURIES and MORTALITIES need to be 
 data_event <- fread('repdata-data-StormData-2.csv', stringsAsFactors = FALSE, header = TRUE, select = c(8, 23, 24))
 ```
 
+```
+## Read 53.1% of 903870 rowsRead 903870 rows and 3 (of 39) columns from 0.194 GB file in 00:00:03
+```
+
 Then contents of the column EVTYPE needed to be cleaned up. I first loaded names of severe weather events from the National Weather Service website. 
 
 ```r
@@ -220,18 +224,20 @@ Final results were plotted then.
 positions_injuries <- rev(data_event_top_injuries$EVTYPE)
 positions_fatalities <- rev(data_event_top_fatalities$EVTYPE)
 
-plot1 <- ggplot(data_event_top_injuries, aes(x = EVTYPE, y = INJURIES_TOT, label = INJURIES_TOT)) + geom_bar(stat = 'identity') + scale_x_discrete(limits = positions_injuries, name = 'Event Type') + coord_flip() + scale_y_continuous(name = "Injuries Caused by Severe Weather Events in the USA (1950 - 2011)", limits = c(0, 100000)) + theme(axis.title.x = element_text(size=15, face = 'bold', vjust = 0), axis.title.y = element_text(size=15, face = 'bold'), axis.text.x = element_text(size=15, color = 'black'), axis.text.y = element_text(size=13, color='black')) + geom_text(hjust = -0.5, aes(size = INJURIES_TOT)) + scale_size(range = c(3,5)) + theme(legend.position = 'none')
+plot1 <- ggplot(data_event_top_injuries, aes(x = EVTYPE, y = INJURIES_TOT, label = INJURIES_TOT)) + geom_bar(stat = 'identity') + scale_x_discrete(limits = positions_injuries, name = 'Event Type') + coord_flip() + scale_y_continuous(name = "Injuries Caused by Severe Weather Events in the USA (1950 - 2011)", limits = c(0, 100000)) + theme(axis.title.x = element_text(size=15, face = 'bold', vjust = 0), axis.title.y = element_text(size=15, face = 'bold'), axis.text.x = element_text(size=15, color = 'black'), axis.text.y = element_text(size=11, color='black')) + geom_text(hjust = -0.5, aes(size = INJURIES_TOT)) + scale_size(range = c(3,5)) + theme(legend.position = 'none')
 
-plot2 <- ggplot(data_event_top_fatalities, aes(x = EVTYPE, y = FATALITIES_TOT, label = FATALITIES_TOT)) + geom_bar(stat = 'identity') + scale_x_discrete(limits = positions_fatalities, name = 'Event Type') + coord_flip() + scale_y_continuous(name = "Fatalities Caused by Severe Weather Events in the USA (1950 - 2011)", limits = c(0, 6000)) + theme(axis.title.x = element_text(size=15, face = 'bold', vjust = 0), axis.title.y = element_text(size=15, face = 'bold'), axis.text.x = element_text(size=15, color = 'black'), axis.text.y = element_text(size=13, color='black')) + geom_text(hjust = -0.5, aes(size = INJURIES_TOT)) + scale_size(range = c(3,5)) + theme(legend.position = 'none') 
+plot2 <- ggplot(data_event_top_fatalities, aes(x = EVTYPE, y = FATALITIES_TOT, label = FATALITIES_TOT)) + geom_bar(stat = 'identity') + scale_x_discrete(limits = positions_fatalities, name = 'Event Type') + coord_flip() + scale_y_continuous(name = "Fatalities Caused by Severe Weather Events in the USA (1950 - 2011)", limits = c(0, 6000)) + theme(axis.title.x = element_text(size=15, face = 'bold', vjust = 0), axis.title.y = element_text(size=15, face = 'bold'), axis.text.x = element_text(size=15, color = 'black'), axis.text.y = element_text(size=11, color='black')) + geom_text(hjust = -0.5, aes(size = INJURIES_TOT)) + scale_size(range = c(3,5)) + theme(legend.position = 'none') 
 ```
 
-##### FIGURE 1: Injuries and fatalities caused by severe weather events in the USA from 1950 to 2011. (Data source: National Weather Service)
 
 ```r
 event_plot <- grid.arrange(plot1, plot2)
 ```
 
 ![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-21-1.png) 
+##### FIGURE 1: Injuries and fatalities caused by severe weather events in the USA from 1950 to 2011. (Data source: National Weather Service)
+
+==================================
 
 ## Question 2 Across the United States, which types of events have the greatest economic consequences?
 
@@ -260,10 +266,8 @@ data_eco <- fread('repdata-data-StormData-2.csv', stringsAsFactors = FALSE, head
 ```
 
 ```
-## Read 52.0% of 903870 rowsRead 903870 rows and 7 (of 39) columns from 0.194 GB file in 00:00:03
+## Read 40.9% of 903870 rowsRead 903870 rows and 7 (of 39) columns from 0.194 GB file in 00:00:04
 ```
-
-
 
 EVTYPE contents were cleaned up as above.
 
@@ -313,7 +317,6 @@ Obtaining missed records
 data_eco_missed_index = setdiff(data_eco$INDEX, data_eco_captured$INDEX)
 data_eco_missed <- data_eco[(data_eco_missed_index),]
 ```
-
 
 Picking out all data with viable property/crop damage data
 
@@ -426,17 +429,17 @@ Then the plot was made.
 ```r
 positions_eco <- rev(data_eco_top$EVTYPE)
 
-eco_plot <- ggplot(data_eco_top, aes(x = EVTYPE, y = TOTALB, label = TOTALB)) + geom_bar(stat = 'identity') + scale_x_discrete(limits = positions_eco, name = 'Event Type') + coord_flip() + scale_y_continuous(name = "Damages Caused by Severe Weather Events in the USA (1950 - 2011) ($ Billion) ", limits = c(0, 200)) + theme(axis.title.x = element_text(size=15, face = 'bold', vjust = 0), axis.title.y = element_text(size=15, face = 'bold'), axis.text.x = element_text(size=15, color = 'black'), axis.text.y = element_text(size=13, color='black')) + geom_text(hjust = -0.2, aes(size = TOTALB)) + scale_size(range = c(3,5)) + theme(legend.position = 'none')
+eco_plot <- ggplot(data_eco_top, aes(x = EVTYPE, y = TOTALB, label = TOTALB)) + geom_bar(stat = 'identity') + scale_x_discrete(limits = positions_eco, name = 'Event Type') + coord_flip() + scale_y_continuous(name = "Damages Caused by Severe Weather Events in the USA, 1950 - 2011, in bn USD", limits = c(0, 200)) + theme(axis.title.x = element_text(size=15, face = 'bold', vjust = 0), axis.title.y = element_text(size=15, face = 'bold'), axis.text.x = element_text(size=15, color = 'black'), axis.text.y = element_text(size=13, color='black')) + geom_text(hjust = -0.2, aes(size = TOTALB)) + scale_size(range = c(3,5)) + theme(legend.position = 'none')
 ```
 
-##### FIGURE 2: Economic damages caused by severe weather events in the USA from 1950 to 2011. (Data source: National Weather Service)
+
 
 ```r
 eco_plot
 ```
 
 ![plot of chunk unnamed-chunk-36](figure/unnamed-chunk-36-1.png) 
-
+##### FIGURE 2: Economic damages caused by severe weather events in the USA from 1950 to 2011 (in billion US dollars). (Data source: National Weather Service)
 
 ## 3. Results
 

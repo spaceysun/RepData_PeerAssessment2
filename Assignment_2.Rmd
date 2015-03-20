@@ -147,15 +147,17 @@ Final results were plotted then.
 positions_injuries <- rev(data_event_top_injuries$EVTYPE)
 positions_fatalities <- rev(data_event_top_fatalities$EVTYPE)
 
-plot1 <- ggplot(data_event_top_injuries, aes(x = EVTYPE, y = INJURIES_TOT, label = INJURIES_TOT)) + geom_bar(stat = 'identity') + scale_x_discrete(limits = positions_injuries, name = 'Event Type') + coord_flip() + scale_y_continuous(name = "Injuries Caused by Severe Weather Events in the USA (1950 - 2011)", limits = c(0, 100000)) + theme(axis.title.x = element_text(size=15, face = 'bold', vjust = 0), axis.title.y = element_text(size=15, face = 'bold'), axis.text.x = element_text(size=15, color = 'black'), axis.text.y = element_text(size=13, color='black')) + geom_text(hjust = -0.5, aes(size = INJURIES_TOT)) + scale_size(range = c(3,5)) + theme(legend.position = 'none')
+plot1 <- ggplot(data_event_top_injuries, aes(x = EVTYPE, y = INJURIES_TOT, label = INJURIES_TOT)) + geom_bar(stat = 'identity') + scale_x_discrete(limits = positions_injuries, name = 'Event Type') + coord_flip() + scale_y_continuous(name = "Injuries Caused by Severe Weather Events in the USA (1950 - 2011)", limits = c(0, 100000)) + theme(axis.title.x = element_text(size=15, face = 'bold', vjust = 0), axis.title.y = element_text(size=15, face = 'bold'), axis.text.x = element_text(size=15, color = 'black'), axis.text.y = element_text(size=11, color='black')) + geom_text(hjust = -0.5, aes(size = INJURIES_TOT)) + scale_size(range = c(3,5)) + theme(legend.position = 'none')
 
-plot2 <- ggplot(data_event_top_fatalities, aes(x = EVTYPE, y = FATALITIES_TOT, label = FATALITIES_TOT)) + geom_bar(stat = 'identity') + scale_x_discrete(limits = positions_fatalities, name = 'Event Type') + coord_flip() + scale_y_continuous(name = "Fatalities Caused by Severe Weather Events in the USA (1950 - 2011)", limits = c(0, 6000)) + theme(axis.title.x = element_text(size=15, face = 'bold', vjust = 0), axis.title.y = element_text(size=15, face = 'bold'), axis.text.x = element_text(size=15, color = 'black'), axis.text.y = element_text(size=13, color='black')) + geom_text(hjust = -0.5, aes(size = INJURIES_TOT)) + scale_size(range = c(3,5)) + theme(legend.position = 'none') 
+plot2 <- ggplot(data_event_top_fatalities, aes(x = EVTYPE, y = FATALITIES_TOT, label = FATALITIES_TOT)) + geom_bar(stat = 'identity') + scale_x_discrete(limits = positions_fatalities, name = 'Event Type') + coord_flip() + scale_y_continuous(name = "Fatalities Caused by Severe Weather Events in the USA (1950 - 2011)", limits = c(0, 6000)) + theme(axis.title.x = element_text(size=15, face = 'bold', vjust = 0), axis.title.y = element_text(size=15, face = 'bold'), axis.text.x = element_text(size=15, color = 'black'), axis.text.y = element_text(size=11, color='black')) + geom_text(hjust = -0.5, aes(size = INJURIES_TOT)) + scale_size(range = c(3,5)) + theme(legend.position = 'none') 
 ```
 
-##### FIGURE 1: Injuries and fatalities caused by severe weather events in the USA from 1950 to 2011. (Data source: National Weather Service)
-```{r fig.width=9, fig.height=6}
+```{r fig.width=10, fig.height=7}
 event_plot <- grid.arrange(plot1, plot2)
 ```
+##### FIGURE 1: Injuries and fatalities caused by severe weather events in the USA from 1950 to 2011. (Data source: National Weather Service)
+
+==================================
 
 ## Question 2 Across the United States, which types of events have the greatest economic consequences?
 
@@ -167,8 +169,6 @@ data_temp2 <- fread('repdata-data-StormData-2.csv', stringsAsFactors = FALSE, he
 colnames(data_temp2)
 data_eco <- fread('repdata-data-StormData-2.csv', stringsAsFactors = FALSE, header = TRUE, select = c(8, 23:28))
 ```
-
-
 
 EVTYPE contents were cleaned up as above.
 ```{r, warning=FALSE, message=FALSE, error=FALSE}
@@ -199,7 +199,6 @@ Obtaining missed records
 data_eco_missed_index = setdiff(data_eco$INDEX, data_eco_captured$INDEX)
 data_eco_missed <- data_eco[(data_eco_missed_index),]
 ```
-
 
 Picking out all data with viable property/crop damage data
 ```{r, warning=FALSE, message=FALSE, error=FALSE}
@@ -303,14 +302,14 @@ Then the plot was made.
 ```{r, warning=FALSE, message=FALSE, error=FALSE}
 positions_eco <- rev(data_eco_top$EVTYPE)
 
-eco_plot <- ggplot(data_eco_top, aes(x = EVTYPE, y = TOTALB, label = TOTALB)) + geom_bar(stat = 'identity') + scale_x_discrete(limits = positions_eco, name = 'Event Type') + coord_flip() + scale_y_continuous(name = "Damages Caused by Severe Weather Events in the USA (1950 - 2011) ($ Billion) ", limits = c(0, 200)) + theme(axis.title.x = element_text(size=15, face = 'bold', vjust = 0), axis.title.y = element_text(size=15, face = 'bold'), axis.text.x = element_text(size=15, color = 'black'), axis.text.y = element_text(size=13, color='black')) + geom_text(hjust = -0.2, aes(size = TOTALB)) + scale_size(range = c(3,5)) + theme(legend.position = 'none')
+eco_plot <- ggplot(data_eco_top, aes(x = EVTYPE, y = TOTALB, label = TOTALB)) + geom_bar(stat = 'identity') + scale_x_discrete(limits = positions_eco, name = 'Event Type') + coord_flip() + scale_y_continuous(name = "Damages Caused by Severe Weather Events in the USA, 1950 - 2011, in bn USD", limits = c(0, 200)) + theme(axis.title.x = element_text(size=15, face = 'bold', vjust = 0), axis.title.y = element_text(size=15, face = 'bold'), axis.text.x = element_text(size=15, color = 'black'), axis.text.y = element_text(size=13, color='black')) + geom_text(hjust = -0.2, aes(size = TOTALB)) + scale_size(range = c(3,5)) + theme(legend.position = 'none')
 ```
 
-##### FIGURE 2: Economic damages caused by severe weather events in the USA from 1950 to 2011. (Data source: National Weather Service)
-```{r fig.width=6, fig.height=5}
+
+```{r fig.width=10, fig.height=5}
 eco_plot
 ```
-
+##### FIGURE 2: Economic damages caused by severe weather events in the USA from 1950 to 2011 (in billion US dollars). (Data source: National Weather Service)
 
 ## 3. Results
 
