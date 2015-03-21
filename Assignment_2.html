@@ -82,9 +82,9 @@ custom.css
 
 <p>In this mini-research, storm data from the National Weather Service, collected from 1950 to 2011 in the USA, were processed and analyzed using R. </p>
 
-<p>Tornadoes were the most destructive in terms of casualties, killing more than 5,500 and injuring 90,000 in the past 60 years. Second to tonado, thunderstorm, heat, flood and lightning ranked 2nd to 5th on the injury chart. Following tornadoes, heat, flash flood, lightning and thunderstom winds were among the most fatal in the same period.</p>
+<p>Tornado was the most destructive type of extreme weather in terms of casualties, killing more than 5,500 and injuring 90,000 in the past 60 years. Second to tonado, thunderstorm, heat, flood and lightning ranked 2nd to 5th on the injury chart. Following tornado, heat, flash flood, lightning and thunderstom wind were among the most fatal in the same period.</p>
 
-<p>When property damange, crop damage and human casualties were considered altogether, flood turned out to be most damaging weather event, causing nearly 150 billion US dollars of losses from 1950 to 2011 in the USA. Hurricane/typhoon and tornadoes ranked 2nd and 3rd on the chart of damages cuased by severe weather events.</p>
+<p>When property damange, crop damage and human casualties were considered altogether, flood turned out to be most damaging weather event, causing nearly 150 billion US dollars of losses from 1950 to 2011 in the USA. Hurricane/typhoon and tornado ranked 2nd and 3rd on the chart of damages caused by severe weather events.</p>
 
 <h2>2. Data Processing</h2>
 
@@ -302,7 +302,7 @@ colnames(data_temp2)
 </code></pre>
 
 <pre><code>## 
-Read 53.1% of 903870 rows
+Read 47.6% of 903870 rows
 Read 903870 rows and 7 (of 39) columns from 0.194 GB file in 00:00:03
 </code></pre>
 
@@ -460,15 +460,17 @@ eco_plot &lt;- ggplot(data_eco_top, aes(x = EVTYPE, y = TOTALB, label = TOTALB))
 
 <h2>3. Results</h2>
 
-<p>Based on weather data from 1950 to 2011 in the USA, tornadoes caused the most casualties among all extreme weather events. On the other hand, flood was the most economically destructive weather event, registering an approximately 150 billion US dollars worth of damage in the same period. </p>
+<p>Based on weather data from 1950 to 2011 in the USA, tornadoes caused the most casualties among all extreme weather events. On the other hand, flood was the most economically destructive type of weather event, registering an approximately 150 billion US dollars worth of damage in the same period. </p>
 
 <h2>4. Additional Thoughts</h2>
 
-<p>In this short study, <strong>read.csv</strong> is way too much slower than <strong>fread</strong>. In order to save more time, first do a subset of first few lines of data to identify meaningless columns; then apply <em>select</em> in <strong>fread</strong>.</p>
+<p>In this short study, <strong>read.csv</strong> is way too much slower than <strong>fread</strong> in loading raw data. In order to save time, first do a subset of the first few lines of data to identify meaningless columns; then apply <em>select</em> in <strong>fread</strong>.</p>
 
-<p>Multiple <strong>for</strong> loops being applied to a large dataset can take way too much time. Replace most <strong>for</strong> loops with subsetting can save a lot of time.</p>
+<p>Multiple <strong>for</strong> loops being applied to a large dataset can take way too much time. Replace as many <strong>for</strong> loops as possible with <strong>subsetting</strong> can save a lot of time.</p>
 
 <p>Applying an extra <strong>index</strong> number to each line of data can be useful to reveal differences between two large datasets, along with the <strong>setdiff</strong> command.</p>
+
+<p>As usual, I thank <strong>stackoverflow</strong> for giving me so many useful tips in this mini research.</p>
 
 </body>
 
