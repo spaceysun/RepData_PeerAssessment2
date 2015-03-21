@@ -10,6 +10,13 @@
 
 ## 1. Synopsis
 
+In this mini-research, storm data from the National Weather Service, collected from 1950 to 2011 in the USA, were processed and analyzed using R. 
+
+Tornadoes were the most destructive in terms of casualties, killing more than 5,500 and injuring 90,000 in the past 60 years. Second to tonado, thunderstorm, heat, flood and lightning ranked 2nd to 5th on the injury chart. Following tornadoes, heat, flash flood, lightning and thunderstom winds were among the most fatal in the same period.
+
+When property damange, crop damage and human casualties were considered altogether, flood turned out to be most damaging weather event, causing nearly 150 billion US dollars of losses from 1950 to 2011 in the USA. Hurricane/typhoon and tornadoes ranked 2nd and 3rd on the chart of damages cuased by severe weather events.
+
+
 ## 2. Data Processing
 
 ### QUESTION 1: Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
@@ -25,7 +32,7 @@ library(gridExtra)
 
 Variables relating to population health include fatalities and injuries. I first set out to check the relationships between types of events and fatalities, types of events and injuries, respectively. 
 
-*I first used **read.csv** to load bz2 files, but it was painfully slow. Then I resorted to **fread** in the data.table" package. It worked blazingly fast, except that there were constant error messages that blocked me from loading the entire database.*
+*I first used "read.csv" to load bz2 files, but it was painfully slow. Then I resorted to "fread"" in the data.table" package. It worked blazingly fast, except that there were constant error messages that blocked me from loading the entire database.*
 
 *After hours of trial and error, I gave up. I went on to extract manually the csv file from the raw bz2 archive, opened it in excel, and deleted the problematic column "REMARKS", which contained various characters that were a) meaningless for this research, and b) rendered read.csv/fread non-working. I saved the resultant csv file as "repdata-data-StormData-2.csv"*
 
@@ -51,10 +58,6 @@ It was decided that only columns of EVTYPE, INJURIES and MORTALITIES need to be 
 
 ```r
 data_event <- fread('repdata-data-StormData-2.csv', stringsAsFactors = FALSE, header = TRUE, select = c(8, 23, 24))
-```
-
-```
-## Read 68.6% of 903870 rowsRead 903870 rows and 3 (of 39) columns from 0.194 GB file in 00:00:03
 ```
 
 Then contents of the column EVTYPE needed to be cleaned up. I first loaded names of severe weather events from the National Weather Service website. 
@@ -266,7 +269,7 @@ data_eco <- fread('repdata-data-StormData-2.csv', stringsAsFactors = FALSE, head
 ```
 
 ```
-## Read 40.9% of 903870 rowsRead 903870 rows and 7 (of 39) columns from 0.194 GB file in 00:00:05
+## Read 53.1% of 903870 rowsRead 903870 rows and 7 (of 39) columns from 0.194 GB file in 00:00:03
 ```
 
 EVTYPE contents were cleaned up as above.
@@ -443,11 +446,13 @@ eco_plot
 
 ## 3. Results
 
+Based on weather data from 1950 to 2011 in the USA, tornadoes caused the most casualties among all extreme weather events. On the other hand, flood was the most economically destructive weather event, registering an approximately 150 billion US dollars worth of damage in the same period. 
+
 ## 4. Additional Thoughts
 
 In this short study, **read.csv** is way too much slower than **fread**. In order to save more time, first do a subset of first few lines of data to identify meaningless columns; then apply *select* in **fread**.
 
-Multiple *for* loops being applied to a large dataset can take way too much time. Replace most *for* loops with subsetting can save a lot of time.
+Multiple **for** loops being applied to a large dataset can take way too much time. Replace most **for** loops with subsetting can save a lot of time.
 
-
+Applying an extra **index** number to each line of data can be useful to reveal differences between two large datasets, along with the **setdiff** command.
 

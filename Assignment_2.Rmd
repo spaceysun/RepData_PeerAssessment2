@@ -328,5 +328,5 @@ In this short study, **read.csv** is way too much slower than **fread**. In orde
 
 Multiple **for** loops being applied to a large dataset can take way too much time. Replace most **for** loops with subsetting can save a lot of time.
 
-
+Applying an extra **index** number to each line of data can be useful to reveal differences between two large datasets, along with the **setdiff** command.
 
