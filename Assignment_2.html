@@ -82,7 +82,7 @@ custom.css
 
 <h2>2. Data Processing</h2>
 
-<h3>Question 1: Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?</h3>
+<h3>QUESTION 1: Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?</h3>
 
 <p>Loading packages</p>
 
@@ -92,11 +92,11 @@ library(ggplot2)
 library(gridExtra)
 </code></pre>
 
-<h4>Variables relating to population health include fatalities and injuries. I first set out to check the relationships between types of events and fatalities, types of events and injuries, respectively.</h4>
+<p>Variables relating to population health include fatalities and injuries. I first set out to check the relationships between types of events and fatalities, types of events and injuries, respectively. </p>
 
-<h4>I first used &ldquo;read.csv&rdquo;&ldquo; to load bz2 files, but it was painfully slow. Then I resorted to &quot;fread&rdquo; in the &ldquo;data.table&rdquo; package. It worked blazingly fast, except that there were constant error messages that blocked me from loading the entire database.</h4>
+<p><em>I first used **read.csv</em>* to load bz2 files, but it was painfully slow. Then I resorted to <strong>fread</strong> in the data.table&quot; package. It worked blazingly fast, except that there were constant error messages that blocked me from loading the entire database.*</p>
 
-<h4>After hours of trial and error, I gave up. I went on to extract manually the csv file from the raw bz2 archive, opened it in excel, and deleted the problematic column &ldquo;REMARKS&rdquo;, which contained various characters that were a) meaningless for this research, and b) rendered read.csv/fread non-working. I saved the resultant csv file as &ldquo;repdata-data-StormData-2.csv&rdquo;.</h4>
+<p><em>After hours of trial and error, I gave up. I went on to extract manually the csv file from the raw bz2 archive, opened it in excel, and deleted the problematic column &ldquo;REMARKS&rdquo;, which contained various characters that were a) meaningless for this research, and b) rendered read.csv/fread non-working. I saved the resultant csv file as &ldquo;repdata-data-StormData-2.csv&rdquo;</em></p>
 
 <p>Part of the csv was loaded and I checked the names of columns.</p>
 
@@ -120,7 +120,7 @@ colnames(data_temp)
 </code></pre>
 
 <pre><code>## 
-Read 53.1% of 903870 rows
+Read 68.6% of 903870 rows
 Read 903870 rows and 3 (of 39) columns from 0.194 GB file in 00:00:03
 </code></pre>
 
@@ -277,7 +277,7 @@ plot2 &lt;- ggplot(data_event_top_fatalities, aes(x = EVTYPE, y = FATALITIES_TOT
 
 <h1></h1>
 
-<h2>Question 2 Across the United States, which types of events have the greatest economic consequences?</h2>
+<h2>QUESTION 2: Across the United States, which types of events have the greatest economic consequences?</h2>
 
 <h4>Apart from property and crop damages, I think injuries and fatalities should also be considered.</h4>
 
@@ -302,7 +302,7 @@ colnames(data_temp2)
 
 <pre><code>## 
 Read 40.9% of 903870 rows
-Read 903870 rows and 7 (of 39) columns from 0.194 GB file in 00:00:04
+Read 903870 rows and 7 (of 39) columns from 0.194 GB file in 00:00:05
 </code></pre>
 
 <p>EVTYPE contents were cleaned up as above.</p>
@@ -460,6 +460,10 @@ eco_plot &lt;- ggplot(data_eco_top, aes(x = EVTYPE, y = TOTALB, label = TOTALB))
 <h2>3. Results</h2>
 
 <h2>4. Additional Thoughts</h2>
+
+<p>In this short study, <strong>read.csv</strong> is way too much slower than <strong>fread</strong>. In order to save more time, first do a subset of first few lines of data to identify meaningless columns; then apply <em>select</em> in <strong>fread</strong>.</p>
+
+<p>Multiple <em>for</em> loops being applied to a large dataset can take way too much time. Replace most <em>for</em> loops with subsetting can save a lot of time.</p>
 
 </body>
 

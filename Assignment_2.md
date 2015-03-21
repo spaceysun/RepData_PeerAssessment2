@@ -12,7 +12,7 @@
 
 ## 2. Data Processing
 
-### Question 1: Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
+### QUESTION 1: Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
 
 Loading packages
 
@@ -23,11 +23,11 @@ library(ggplot2)
 library(gridExtra)
 ```
 
-#### Variables relating to population health include fatalities and injuries. I first set out to check the relationships between types of events and fatalities, types of events and injuries, respectively. 
+Variables relating to population health include fatalities and injuries. I first set out to check the relationships between types of events and fatalities, types of events and injuries, respectively. 
 
-#### I first used "read.csv"" to load bz2 files, but it was painfully slow. Then I resorted to "fread" in the "data.table" package. It worked blazingly fast, except that there were constant error messages that blocked me from loading the entire database. 
+*I first used **read.csv** to load bz2 files, but it was painfully slow. Then I resorted to **fread** in the data.table" package. It worked blazingly fast, except that there were constant error messages that blocked me from loading the entire database.*
 
-#### After hours of trial and error, I gave up. I went on to extract manually the csv file from the raw bz2 archive, opened it in excel, and deleted the problematic column "REMARKS", which contained various characters that were a) meaningless for this research, and b) rendered read.csv/fread non-working. I saved the resultant csv file as "repdata-data-StormData-2.csv".
+*After hours of trial and error, I gave up. I went on to extract manually the csv file from the raw bz2 archive, opened it in excel, and deleted the problematic column "REMARKS", which contained various characters that were a) meaningless for this research, and b) rendered read.csv/fread non-working. I saved the resultant csv file as "repdata-data-StormData-2.csv"*
 
 Part of the csv was loaded and I checked the names of columns.
 
@@ -54,7 +54,7 @@ data_event <- fread('repdata-data-StormData-2.csv', stringsAsFactors = FALSE, he
 ```
 
 ```
-## Read 53.1% of 903870 rowsRead 903870 rows and 3 (of 39) columns from 0.194 GB file in 00:00:03
+## Read 68.6% of 903870 rowsRead 903870 rows and 3 (of 39) columns from 0.194 GB file in 00:00:03
 ```
 
 Then contents of the column EVTYPE needed to be cleaned up. I first loaded names of severe weather events from the National Weather Service website. 
@@ -239,7 +239,7 @@ event_plot <- grid.arrange(plot1, plot2)
 
 ==================================
 
-## Question 2 Across the United States, which types of events have the greatest economic consequences?
+## QUESTION 2: Across the United States, which types of events have the greatest economic consequences?
 
 #### Apart from property and crop damages, I think injuries and fatalities should also be considered.
 
@@ -266,7 +266,7 @@ data_eco <- fread('repdata-data-StormData-2.csv', stringsAsFactors = FALSE, head
 ```
 
 ```
-## Read 40.9% of 903870 rowsRead 903870 rows and 7 (of 39) columns from 0.194 GB file in 00:00:04
+## Read 40.9% of 903870 rowsRead 903870 rows and 7 (of 39) columns from 0.194 GB file in 00:00:05
 ```
 
 EVTYPE contents were cleaned up as above.
@@ -444,5 +444,10 @@ eco_plot
 ## 3. Results
 
 ## 4. Additional Thoughts
+
+In this short study, **read.csv** is way too much slower than **fread**. In order to save more time, first do a subset of first few lines of data to identify meaningless columns; then apply *select* in **fread**.
+
+Multiple *for* loops being applied to a large dataset can take way too much time. Replace most *for* loops with subsetting can save a lot of time.
+
 
 
