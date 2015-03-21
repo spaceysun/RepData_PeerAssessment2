@@ -269,7 +269,7 @@ data_eco <- fread('repdata-data-StormData-2.csv', stringsAsFactors = FALSE, head
 ```
 
 ```
-## Read 47.6% of 903870 rowsRead 903870 rows and 7 (of 39) columns from 0.194 GB file in 00:00:03
+## Read 90.7% of 903870 rowsRead 903870 rows and 7 (of 39) columns from 0.194 GB file in 00:00:03
 ```
 
 EVTYPE contents were cleaned up as above.
